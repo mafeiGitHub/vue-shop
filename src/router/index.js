@@ -5,6 +5,10 @@ import Welcome from '@/components/Welcome'
 import Users from '@/components/user/Users'
 import Roles from '@/components/power/Roles'
 import Rights from '@/components/power/Rights'
+import Add from '@/components/goods/Add'
+import List from '@/components/goods/List'
+import Cate from '@/components/goods/Cate'
+import Params from '@/components/goods/Params'
 
 const routes = [
   {
@@ -23,7 +27,11 @@ const routes = [
       { path: '/welcome', component: Welcome },
       { path: '/users', component: Users },
       { path: '/roles', component: Roles },
-      { path: '/rights', component: Rights }
+      { path: '/rights', component: Rights },
+      { path: '/add', component: Add },
+      { path: '/goods', component: List },
+      { path: '/categories', component: Cate },
+      { path: '/params', component: Params }
     ]
   }
 

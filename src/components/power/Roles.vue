@@ -11,7 +11,8 @@
     <el-table
       :data="roleList"
       style="width: 100%"
-      row-key="id"
+      row-key="roleList"
+      stripe
       border
       :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
     >
@@ -39,7 +40,6 @@
           </el-row>
         </template>
       </el-table-column>
-
 <!--      索引列-->
       <el-table-column type="index" />
       <el-table-column prop="roleName" label="角色名称"/>
