@@ -42,15 +42,15 @@
             placement="top"
             :enterable="true"
           >
-            <el-button type="warning" size="small" :icon="Setting"/>
+            <el-button @click="showSetRoleDialog(scope.row)" type="warning" size="small" :icon="Setting"/>
           </el-tooltip>
         </template>
 
       </el-table-column>
     </el-table>
     <el-pagination
-      :currentPage="queryInfo.pagenum"
-      :page-sizes="[1, 2, 5, 10]"
+      :current-page="queryInfo.pagenum"
+      :page-size="queryInfo.pagesize"
       layout="total, sizes, prev, pager, next, jumper"
       :total="total"
       @size-change="handleSizeChange"
@@ -122,6 +122,35 @@
           取消
         </el-button>
         <el-button type="primary" @click="editUser()">
+          确定
+        </el-button>
+      </span>
+    </template>
+  </el-dialog>
+  <el-dialog title="分配用户角色"
+             v-model="setRoleDialogVisible"
+             width="50%"
+             @close="setRoleDialogClosed"
+             draggable>
+<div>
+  <p>当前的用户：{{userInfo.username}}</p>
+  <p>当前的角色：{{userInfo.role_name}}</p>
+  <p>分配新角色：<el-select v-model="selectedRoleId"   placeholder="请选择">
+    <el-option
+      v-for="item in roleList"
+      :key="item.id"
+      :label="item.roleName"
+      :value="item.id"
+    />
+  </el-select></p>
+</div>
+
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="editDialogVisible = false">
+          取消
+        </el-button>
+        <el-button type="primary" @click="setRole">
           确定
         </el-button>
       </span>
@@ -217,7 +246,15 @@ export default {
           { required: true, message: '请输入手机号', trigger: 'blur' },
           { validator: checkMobile, trigger: 'blur' }
         ]
-      }
+      },
+      // 分配角色
+      setRoleDialogVisible: false,
+      setRoleDialogClose: false,
+      userInfo: {},
+      roleList: [],
+      selectedRoleId: '',
+      selectedRoleRef: ''
+
     }
   },
   created () {
@@ -228,7 +265,6 @@ export default {
     async getUserList () {
       const res = await this.$http.get('users', this.queryInfo)
       if (res.meta.status !== 200) return this.$message(res.meta.msg)
-      console.log(res)
       this.userList = res.data.users
       this.total = res.data.total
     },
@@ -244,15 +280,12 @@ export default {
     },
     // 更改用户状态
     async userDataChanged (userInfo) {
-      // console.log(`users/${userInfo.id}/state/${userInfo.mg_state}`)
       const res = await this.$http.put(`users/${userInfo.id}/state/${userInfo.mg_state}`)
-      // console.log(res.meta.status)
       if (res.meta.status !== 200) {
         userInfo.mg_state = !userInfo.mg_state
         return this.$message.error('更新用户状态失败')
       }
       this.$message.success('更新用户状态成功！')
-      // console.log(res)
     },
     // 添加用户
     addUser () {
@@ -307,7 +340,31 @@ export default {
       if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
       this.$message.success(res.meta.msg)
       this.getUserList()
+    },
+    // 展示分配角色的对话框
+    async showSetRoleDialog (userInfo) {
+      this.userInfo = userInfo
+      this.setRoleDialogVisible = true
+      const res = await this.$http.get('roles')
+      this.roleList = res.data
+      // console.log(this.roleList)
+    },
+    // setRole分配角色
+    async setRole () {
+      const res = await this.$http.put(`users/${this.userInfo.id}/role`, {
+        rid: this.selectedRoleId
+      })
+      if (res.meta.status !== 200) return this.$message.error('分配角色失败！')
+      this.$message.success('分配新角色成功')
+      this.setRoleDialogVisible = false
+      this.getUserList()
+    },
+    // 监听分配角色窗口关闭
+    setRoleDialogClosed () {
+      this.selectedRoleId = ''
+      this.userInfo = {}
     }
+
   }
 }
 </script>

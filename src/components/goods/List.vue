@@ -25,7 +25,11 @@
       <el-table-column type="index"/>
       <el-table-column prop="goods_name" label="商品名称"  />
       <el-table-column prop="goods_price" label="商品价格（元）"/>
-      <el-table-column prop="add_time" label="创建时间" />
+      <el-table-column prop="add_time" label="创建时间" >
+        <template v-slot="scope">
+          {{dateFormat(scope.row.add_time)}}
+        </template>
+      </el-table-column>
       <el-table-column label="操作" >
         <template v-slot="scope">
           <el-button @click="showEditDialog(scope.row.id)" type="primary" :icon="Edit" ></el-button>
@@ -116,6 +120,20 @@ export default {
       if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
       this.$message.success(res.meta.msg)
       this.getGoodsList()
+    },
+    // 格式化时间方法
+    dateFormat (originVal) {
+      const dt = new Date(originVal)
+
+      const y = dt.getFullYear()
+      const m = (dt.getMonth() + 1 + '').padStart(2, '0')
+      const d = (dt.getDate() + '').padStart(2, '0')
+
+      const hh = (dt.getHours() + '').padStart(2, '0')
+      const mm = (dt.getMinutes() + '').padStart(2, '0')
+      const ss = (dt.getSeconds() + '').padStart(2, '0')
+
+      return `${y}-${m}-${d} ${hh}:${mm}:${ss}`
     }
   }
 }
