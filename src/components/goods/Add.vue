@@ -19,7 +19,7 @@
     </el-steps>
 <!--    tab栏-->
     <el-form
-      ref="ruleFormRef"
+      ref="addFormRef"
       :model="addForm"
       :rules="addFormRules"
       label-width="100px"
@@ -69,6 +69,7 @@
           :on-remove="handleRemove"
           list-type="picture"
           :on-success="handleSuccess"
+          :headers="headerObj"
         >
           <el-button type="primary">点击上传</el-button>
         </el-upload>
@@ -84,9 +85,9 @@
     </el-form>
   </el-card>
 <!--图片预览-->
-<!--  <el-dialog title="图片预览" v-model:visible="previewVisible" width="50%">-->
-<!--    <img :src="previewPath" alt="" class="previewImg">-->
-<!--  </el-dialog>-->
+  <el-dialog title="图片预览" v-model="previewVisible" width="50%">
+    <img :src="previewPath" alt="" class="previewImg">
+  </el-dialog>
 </template>
 
 <script>
@@ -247,7 +248,17 @@ export default {
 
         // 发起请求添加商品
         // 商品的名称，必须是唯一的
-        const res = await this.$http.post('goods', form)
+        const res = await this.$http.post('goods', {
+          goods_name: form.goods_name,
+          goods_cat: form.goods_cat,
+          goods_price: form.goods_price,
+          goods_number: form.goods_number,
+          goods_weight: form.goods_weight,
+          goods_introduce: form.goods_introduce,
+          pics: form.pics,
+          attrs: form.attrs
+        })
+        // console.log(res)
 
         if (res.meta.status !== 201) {
           return this.$message.error('添加商品失败！')
