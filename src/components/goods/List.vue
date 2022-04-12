@@ -19,7 +19,7 @@
           </template>
         </el-input>
       </el-col>
-      <el-col :span="4"><el-button type="primary" @click="addDialogVisible=true">添加商品</el-button></el-col>
+      <el-col :span="4"><el-button type="primary" @click="jumpAdd">添加商品</el-button></el-col>
     </el-row>
     <el-table :data="goodsList" border stripe style="width: 100%">
       <el-table-column type="index"/>
@@ -134,6 +134,9 @@ export default {
       const ss = (dt.getSeconds() + '').padStart(2, '0')
 
       return `${y}-${m}-${d} ${hh}:${mm}:${ss}`
+    },
+    jumpAdd () {
+      this.$router.push('/add')
     }
   }
 }
